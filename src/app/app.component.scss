@@ -1,0 +1,37 @@
+@use '../styles' as *;
+@use '../styles/variables.scss' as *;
+
+.app-container {
+  font-size: 1.2rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  width: 100%;
+  overflow-y: auto;
+}
+
+.header {
+  width: 100%;
+}
+
+.extra-margin {
+  min-height: 2em;
+}
+
+.footer {
+  width: 100%;
+}
+
+@media only screen and (max-width: 600px) {
+  .app-container {
+    display: flex;
+    flex-direction: column;
+  }
+}

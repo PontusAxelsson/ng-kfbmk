@@ -1,0 +1,44 @@
+@use './variables' as *;
+
+:root {
+  /* Define each variable in their light and dark mode */
+  --text: white;
+  --bg: #{$dark-blue};
+  --accent: #{$yellow};
+  --secondary: #{$teal};
+  // --accent: #{ light-dark(mix($light-blue, $dark-blue), mix($pink, $light-blue)) };
+  --link: #{$yellow};
+  --blue200: #{$blue-0};
+  --blue160: #{$blue-40};
+  --blue40: #{$blue-160};
+
+  --extra-margin: 2em;
+}
+
+@media only screen and (max-width: 600px) {
+  :root {
+    --extra-margin: 5em;
+  }
+}
+
+// body {
+//   color: var(--text);
+//   background: var(--bg);
+//   min-height: -webkit-fill-available;
+// }
+
+// html {
+//   height: -webkit-fill-available;
+// }
+
+main {
+  text-align: center;
+}
+
+button {
+  width: 100%;
+}
+
+a:any-link {
+  color: var(--link, blue);
+}

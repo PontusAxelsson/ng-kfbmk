@@ -1,0 +1,6 @@
+<app-text-wrapper>
+  {{ store.trainingGroups() | json }}
+  @if (store.isLoaded()) {
+    loaded!!
+  }
+</app-text-wrapper>
