@@ -1,1 +1,10 @@
-<p>news works!</p>
+<app-text-wrapper>
+  <h2>Nyheter</h2>
+  @for (news of store.news(); track news.id) {
+    <div>
+      <h4 className="title">{{ news.title }}</h4>
+    </div>
+    <div className="news-text" [innerHTML]="news.text"></div>
+  }
+  <button (click)="showNumNewsChanged()">Ladda fler</button>
+</app-text-wrapper>

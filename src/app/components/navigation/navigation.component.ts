@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { NewspaperComponent } from './icons/newspaper/newspaper.component';
 import { ShuttleComponent } from './icons/shuttle/shuttle.component';
 import { MapLocationComponent } from './icons/map-location/map-location.component';
@@ -8,7 +8,8 @@ import { MapLocationComponent } from './icons/map-location/map-location.componen
   selector: 'app-navigation',
   standalone: true,
   imports: [
-    RouterModule,
+    RouterLink,
+    RouterLinkActive,
     NewspaperComponent,
     ShuttleComponent,
     MapLocationComponent,

@@ -1,6 +1,44 @@
 <app-text-wrapper>
-  {{ store.trainingGroups() | json }}
   @if (store.isLoaded()) {
-    loaded!!
+    <h2>Välkommen till Kävlinge-Furulund Badmintonklubb</h2>
+    <hr />
+    <h3>Träningsgrupper</h3>
+    @for (groupData of store.trainingGroups(); track groupData.id) {
+      <div>
+        <h4>{{ groupData.id }}</h4>
+        <h4>{{ groupData.name }}</h4>
+        <p>{{ groupData.info }}</p>
+        <h5>Träningstider:</h5>
+        <p>{{ groupData.training }}</p>
+      </div>
+    }
+    <h3>Träningsavgifter</h3>
+    <p>Medlemsavgift per spelsäsong: 200:-/person.</p>
+    <p>
+      Träningsvgifter för de som spelar i träningsgrupper säsongen
+      {{ thisYear }}/{{ nextYear }}.
+    </p>
+    <table>
+      <tbody>
+        <tr>
+          <th>Åldersgrupp</th>
+          <th>Avgift</th>
+        </tr>
+        <tr>
+          <td>{{ beginner().age_start }} - {{ beginner().age_end }} år</td>
+          <td>{{ beginner().cost }} kr</td>
+        </tr>
+        <tr>
+          <td>
+            {{ intermediate().age_start }} - {{ intermediate().age_end }} år
+          </td>
+          <td>{{ intermediate().cost }} kr</td>
+        </tr>
+        <tr>
+          <td>{{ seniors().age_start }}+ år</td>
+          <td>{{ seniors().cost }} kr</td>
+        </tr>
+      </tbody>
+    </table>
   }
 </app-text-wrapper>

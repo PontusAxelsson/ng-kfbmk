@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { TrainingGroup } from '../store/traning-groups.store';
+import { News } from '../store/news.store';
 import {
   CollectionReference,
   DocumentData,
@@ -7,29 +7,31 @@ import {
   collection,
   query,
   onSnapshot,
+  limit,
+  orderBy,
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
-export class TrainingGroupService {
+export class NewsService {
   readonly firestore = inject(Firestore);
-  readonly dbPath: string = 'trainingGroups';
+  readonly dbPath: string = 'news';
 
-  subscribeAll() {
+  subscribeAll(limiter: number = 5) {
     const docRef: CollectionReference<DocumentData, DocumentData> = collection(
       this.firestore,
       this.dbPath,
     );
-    const queryRef = query(docRef);
-    return new Observable<TrainingGroup[]>((observer) => {
+
+    const queryRef = query(docRef, limit(limiter), orderBy('created', 'desc'));
+    return new Observable<News[]>((observer) => {
       return onSnapshot(
         queryRef,
-        (snapshot) =>
-          observer.next(
-            snapshot.docs.map((doc) => doc.data() as TrainingGroup),
-          ),
+        (snapshot) => {
+          return observer.next(snapshot.docs.map((doc) => doc.data() as News));
+        },
         (error) => observer.error(error.message),
       );
     });

@@ -1,38 +1,50 @@
 import { inject } from '@angular/core';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { TrainingGroupService } from '../services/training-group.service';
+import { distinctUntilChanged, pipe, switchMap, tap } from 'rxjs';
 
 export interface TrainingGroup {
+  id: string;
   name: string;
   info: string;
   training: string;
+  age_start: number;
+  age_end: number;
+  cost: number;
 }
 
 interface TrainingGroupState {
   trainingGroups: TrainingGroup[];
   isLoading: boolean;
   isLoaded: boolean;
-  filter: { query: string; order: 'asc' | 'desc' };
 }
 
 const initialState: TrainingGroupState = {
   trainingGroups: [],
   isLoading: false,
   isLoaded: false,
-  filter: { query: '', order: 'asc' },
 };
 
 export const TrainingGroupStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
-  withMethods((store, booksService = inject(TrainingGroupService)) => ({
+  withMethods((store, trainingGroupService = inject(TrainingGroupService)) => ({
     /* ... */
     // 👇 Defining a method to load all books.
-    async loadAll(): Promise<void> {
-      patchState(store, { isLoading: true });
-
-      const trainingGroups = await booksService.loadAll();
-      patchState(store, { trainingGroups, isLoading: false, isLoaded: true });
-    },
+    loadAll: rxMethod<void>(
+      pipe(
+        distinctUntilChanged(),
+        tap(() => patchState(store, { isLoading: true })),
+        switchMap(() => trainingGroupService.subscribeAll()),
+        tap((trainingGroups) =>
+          patchState(store, {
+            isLoading: false,
+            isLoaded: true,
+            trainingGroups,
+          }),
+        ),
+      ),
+    ),
   })),
 );
