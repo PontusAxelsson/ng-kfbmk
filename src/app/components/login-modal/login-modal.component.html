@@ -1,2 +1,6 @@
-<app-google-login-button />
-<app-email-login-button />
+@if (showEmailLogin()) {
+  <app-email-login />
+} @else {
+  <app-google-login-button (click)="clickGoogleLoginBtn()" />
+  <app-email-login-button (click)="clickMailLoginBtn()" />
+}

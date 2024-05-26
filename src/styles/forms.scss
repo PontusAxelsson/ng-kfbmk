@@ -2,6 +2,7 @@
 $primary: var(--accent);
 $secondary: var(--secondary);
 $gray: var(--blue160);
+$warn: var(--red);
 form {
   margin-bottom: 0.8em;
 }
@@ -68,6 +69,26 @@ input:focus {
   border-width: 3px;
   border-image: linear-gradient(to right, $primary, $secondary);
   border-image-slice: 1;
+}
+input:focus.ng-touched.ng-invalid {
+  ~ label {
+    position: absolute;
+    top: 0;
+    display: block;
+    transition: 0.2s;
+    font-size: 1rem;
+    color: $primary;
+    font-weight: 700;
+  }
+
+  padding-bottom: 6px;
+  border-width: 3px;
+  border-image: linear-gradient(to right, $red, $secondary);
+  border-image-slice: 1;
+}
+
+input.ng-touched.ng-invalid {
+  border-bottom-color: $red;
 }
 
 /* reset input */
