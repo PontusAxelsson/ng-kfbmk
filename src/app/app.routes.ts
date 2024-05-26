@@ -1,4 +1,4 @@
-import { Routes } from '@angular/router';
+import { Routes, RouterConfigOptions } from '@angular/router';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'info', pathMatch: 'full' },

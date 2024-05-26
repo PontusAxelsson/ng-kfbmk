@@ -7,6 +7,7 @@
 @use './styles/texteditor';
 @use './styles/elements';
 @use './styles/typography';
+@import '@angular/cdk/overlay-prebuilt.css';
 
 app-root {
   display: block;

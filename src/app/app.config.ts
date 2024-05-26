@@ -4,6 +4,7 @@ import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 
 import { routes } from './app.routes';
+import { getAuth, provideAuth } from '@angular/fire/auth';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -26,6 +27,8 @@ export const appConfig: ApplicationConfig = {
           measurementId: 'G-1GYZ28X74Y',
         }),
       ),
+      provideAuth(() => getAuth()),
+      provideFirestore(() => getFirestore()),
     ),
     importProvidersFrom(provideFirestore(() => getFirestore())),
   ],
