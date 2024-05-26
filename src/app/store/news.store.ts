@@ -5,9 +5,11 @@ import { NewsService } from '../services/news.service';
 import { distinctUntilChanged, pipe, switchMap, tap } from 'rxjs';
 
 export interface News {
-  id: string;
+  uuid: string;
   title: string;
   text: string;
+  created: Date;
+  createdBy: string;
 }
 
 interface NewsState {

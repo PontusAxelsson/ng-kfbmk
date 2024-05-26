@@ -1,10 +1,14 @@
 <app-text-wrapper>
   <h2>Nyheter</h2>
-  @for (news of store.news(); track news.id) {
+  @for (news of store.news(); track news.uuid) {
     <div>
       <h4 className="title">{{ news.title }}</h4>
     </div>
     <div className="news-text" [innerHTML]="news.text"></div>
   }
-  <button (click)="showNumNewsChanged()">Ladda fler</button>
+  @if (store.isLoading()) {
+    <p>Laddar...</p>
+  } @else {
+    <button class="btn" (click)="showNumNewsChanged()">Ladda fler</button>
+  }
 </app-text-wrapper>
