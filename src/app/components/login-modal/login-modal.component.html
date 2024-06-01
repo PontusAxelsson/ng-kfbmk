@@ -1,3 +1,7 @@
+<app-close-button
+  class="close-btn"
+  (click)="dialog.closeAll()"
+></app-close-button>
 @if (showEmailLogin()) {
   <app-email-login />
 } @else {

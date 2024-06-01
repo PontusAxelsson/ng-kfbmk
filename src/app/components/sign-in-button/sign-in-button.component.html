@@ -1,0 +1,8 @@
+<button type="button" class="dark btn" (click)="signMeOut()">
+  <span>Logga ut</span>
+  @if (user?.photoURL) {
+    <img [src]="user?.photoURL" alt="lock" />
+  } @else {
+    <img src="../../../assets/icons/lock.svg" alt="lock" />
+  }
+</button>

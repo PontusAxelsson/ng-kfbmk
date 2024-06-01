@@ -1,4 +1,7 @@
 <div class="header">
+  <div class="fill"></div>
   <div class="logo"></div>
-  <button (click)="openLoginModal()">login</button>
+  <div class="fill login-container">
+    <app-sign-in-button (click)="openLoginModal()" />
+  </div>
 </div>

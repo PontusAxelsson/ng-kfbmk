@@ -1,4 +1,5 @@
 :host {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -6,4 +7,10 @@
   background: var(--bg);
   border-radius: 8px;
   padding: 8px 16px;
+}
+
+.close-btn {
+  position: absolute;
+  top: -0.3em;
+  right: -0.3em;
 }

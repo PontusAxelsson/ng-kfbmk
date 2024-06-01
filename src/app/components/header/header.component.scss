@@ -22,3 +22,14 @@ $imgWidth: calc($imgHeight * 1.31875);
   mask-image: url('/assets/logo-transparent.png');
   mask-size: $imgWidth $imgHeight;
 }
+
+.fill {
+  flex: 1;
+}
+
+.login-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-right: 1em;
+}
