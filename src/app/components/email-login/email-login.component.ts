@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-email-login',
@@ -11,12 +12,20 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EmailLoginComponent {
+  userService = inject(UserService);
+
   loginForm = new FormGroup({
     email: new FormControl(''),
     password: new FormControl(''),
   });
 
   submitLogin() {
-    console.log('Email login');
+    if (this.loginForm.invalid) {
+      return;
+    }
+    this.userService.signInEmail({
+      email: this.loginForm.value.email || '',
+      password: this.loginForm.value.password || '',
+    });
   }
 }

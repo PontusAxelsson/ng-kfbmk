@@ -2,13 +2,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
-  computed,
   inject,
 } from '@angular/core';
-import { effect } from '@angular/core';
 import { ViewportScroller } from '@angular/common';
 import { TextWrapperComponent } from '../../components/text-wrapper/text-wrapper.component';
 import { NewsStore } from '../../store/news.store';
+import { UserStore } from '../../store/user.store';
 
 @Component({
   selector: 'app-news',
@@ -20,14 +19,11 @@ import { NewsStore } from '../../store/news.store';
 })
 export class NewsComponent implements OnInit {
   store = inject(NewsStore);
-  viewportScroller = inject(ViewportScroller);
-  showNumNews = computed(() => this.store.limiter);
+  userStore = inject(UserStore);
+  user = this.userStore.user;
 
-  constructor() {
-    effect(() => {
-      console.log(`Store:`, this.store.news());
-    });
-  }
+  viewportScroller = inject(ViewportScroller);
+  showNumNews = this.store.limiter;
 
   showNumNewsChanged() {
     this.store.loadAll(this.store.limiter() + 2);

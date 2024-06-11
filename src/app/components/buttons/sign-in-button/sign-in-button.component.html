@@ -1,0 +1,13 @@
+@if (user$ | async; as user) {
+  <button type="button" class="dark btn" (click)="signMeOut()">
+    @if (user.photoURL) {
+      <img [src]="user.photoURL" alt="lock" />
+    }
+    <span>Logga ut</span>
+  </button>
+} @else {
+  <button type="button" class="dark btn" (click)="signMeIn()">
+    <span>Logga in</span>
+    <img src="../../../assets/icons/lock.svg" alt="lock" />
+  </button>
+}

@@ -12,11 +12,14 @@
   <div class="form-group">
     <label htmlFor="password"> Lösenord </label>
     <input
-      type="text"
+      type="password"
       required
       formControlName="password"
       id="password"
       name="password"
     />
   </div>
+  <button class="btn" type="submit" [disabled]="!loginForm.valid">
+    Logga in
+  </button>
 </form>
