@@ -1,6 +1,6 @@
 <app-text-wrapper>
   @defer (when !loading()) {
-    <p>edit of {{ 'uuid' }} works!</p>
+    <p>edit of {{ uuid }} works!</p>
     <ckeditor
       [editor]="classicEditor"
       [config]="config"
@@ -9,4 +9,5 @@
   } @placeholder {
     <app-loading-spinner></app-loading-spinner>
   }
+  {{newsItem()|json}}
 </app-text-wrapper>

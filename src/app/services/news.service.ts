@@ -39,15 +39,17 @@ export class NewsService {
     });
   }
 
-  getById(id: string) {
-    const docRef = doc(this.firestore, 'news', id);
-    getDoc(docRef);
+  getById(uid: string) {
+    const queryRef = doc(this.firestore, this.dbPath, uid);
     return new Observable<News>((observer) => {
       return onSnapshot(
-        docRef,
-        (snapshot) => {
-          return observer.next(snapshot.data() as News);
-        },
+        queryRef,
+        () =>
+          getDoc(queryRef).then((doc) => {
+            console.log(doc.exists());
+
+            return observer.next(doc.data() as News);
+          }),
         (error) => observer.error(error.message),
       );
     });

@@ -60,12 +60,14 @@ export const NewsStore = signalStore(
         distinctUntilChanged(),
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) => newsService.getById(id)),
-        tap((news) =>
-          patchState(store, {
+        tap((news) => {
+          console.log(news);
+
+          return patchState(store, {
             isLoading: false,
             entities: store.entities().set(news.uuid, news),
-          }),
-        ),
+          });
+        }),
       ),
     ),
   })),

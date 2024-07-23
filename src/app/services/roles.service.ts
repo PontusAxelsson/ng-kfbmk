@@ -19,13 +19,13 @@ export class RolesService {
   readonly firestore = inject(Firestore);
   readonly dbPath: string = 'Roles';
 
-  subscribeAll(limiter: number = 5) {
+  subscribeAll() {
     const docRef: CollectionReference<DocumentData, DocumentData> = collection(
       this.firestore,
       this.dbPath,
     );
 
-    const queryRef = query(docRef, limit(limiter), orderBy('created', 'desc'));
+    const queryRef = query(docRef);
     return new Observable<Role[]>((observer) => {
       return onSnapshot(
         queryRef,
