@@ -8,11 +8,14 @@ import { ViewportScroller } from '@angular/common';
 import { TextWrapperComponent } from '../../components/text-wrapper/text-wrapper.component';
 import { NewsStore } from '../../store/news.store';
 import { UserStore } from '../../store/user.store';
+import { RouterLink } from '@angular/router';
+
+import 'ckeditor5/ckeditor5.css';
 
 @Component({
   selector: 'app-news',
   standalone: true,
-  imports: [TextWrapperComponent],
+  imports: [TextWrapperComponent, RouterLink],
   templateUrl: './news.component.html',
   styleUrl: './news.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

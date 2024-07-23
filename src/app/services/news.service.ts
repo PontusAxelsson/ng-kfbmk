@@ -9,6 +9,8 @@ import {
   onSnapshot,
   limit,
   orderBy,
+  getDoc,
+  doc,
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 
@@ -31,6 +33,20 @@ export class NewsService {
         queryRef,
         (snapshot) => {
           return observer.next(snapshot.docs.map((doc) => doc.data() as News));
+        },
+        (error) => observer.error(error.message),
+      );
+    });
+  }
+
+  getById(id: string) {
+    const docRef = doc(this.firestore, 'news', id);
+    getDoc(docRef);
+    return new Observable<News>((observer) => {
+      return onSnapshot(
+        docRef,
+        (snapshot) => {
+          return observer.next(snapshot.data() as News);
         },
         (error) => observer.error(error.message),
       );

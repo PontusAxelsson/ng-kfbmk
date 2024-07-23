@@ -4,13 +4,13 @@ export const routes: Routes = [
   { path: '', redirectTo: 'info', pathMatch: 'full' },
   {
     path: 'info',
-    loadComponent: () =>
-      import('./routes/info/info.component').then((m) => m.InfoComponent),
+    loadChildren: () =>
+      import('./routes/info/info.routes').then((m) => m.routes),
   },
   {
     path: 'news',
-    loadComponent: () =>
-      import('./routes/news/news.component').then((m) => m.NewsComponent),
+    loadChildren: () =>
+      import('./routes/news/news.routes').then((m) => m.routes),
   },
   {
     path: 'map',

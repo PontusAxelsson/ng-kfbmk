@@ -1,5 +1,11 @@
-import { inject } from '@angular/core';
-import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
+import { computed, inject } from '@angular/core';
+import {
+  patchState,
+  signalStore,
+  withComputed,
+  withMethods,
+  withState,
+} from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { NewsService } from '../services/news.service';
 import { distinctUntilChanged, pipe, switchMap, tap } from 'rxjs';
@@ -8,12 +14,13 @@ export interface News {
   uuid: string;
   title: string;
   text: string;
-  created: Date;
+  created: { seconds: number; nanoseconds: number };
   createdBy: string;
 }
 
 interface NewsState {
   news: News[];
+  entities: Map<string, News>;
   isLoading: boolean;
   isLoaded: boolean;
   limiter: number;
@@ -21,6 +28,7 @@ interface NewsState {
 
 const initialState: NewsState = {
   news: [],
+  entities: new Map(),
   isLoading: false,
   isLoaded: false,
   limiter: 4,
@@ -29,6 +37,9 @@ const initialState: NewsState = {
 export const NewsStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
+  withComputed((store) => ({
+    news: computed(() => [...store.entities().values()]),
+  })),
   withMethods((store, newsService = inject(NewsService)) => ({
     loadAll: rxMethod<number>(
       pipe(
@@ -39,7 +50,20 @@ export const NewsStore = signalStore(
           patchState(store, {
             isLoading: false,
             isLoaded: true,
-            news,
+            entities: new Map(news.map((news) => [news.uuid, news])),
+          }),
+        ),
+      ),
+    ),
+    loadById: rxMethod<string>(
+      pipe(
+        distinctUntilChanged(),
+        tap(() => patchState(store, { isLoading: true })),
+        switchMap((id) => newsService.getById(id)),
+        tap((news) =>
+          patchState(store, {
+            isLoading: false,
+            entities: store.entities().set(news.uuid, news),
           }),
         ),
       ),

@@ -2,13 +2,13 @@
   <h2>Nyheter</h2>
   @for (news of store.news(); track news.uuid) {
     <div>
-      <h4 className="title">
-        {{ news.title }}
-      </h4>
+      <h4 className="title" [innerText]="news.title"></h4>
     </div>
     <div className="news-text" [innerHTML]="news.text"></div>
     @if (user()?.role === 'admin') {
-      <button class="btn" type="button">Ändra</button>
+      <a routerLink="/news/edit/{{ news.uuid }}" routerLinkActive="active">
+        <button class="btn" type="button">Ändra</button>
+      </a>
     }
   }
   @if (store.isLoading()) {

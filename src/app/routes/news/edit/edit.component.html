@@ -1,0 +1,12 @@
+<app-text-wrapper>
+  @defer (when !loading()) {
+    <p>edit of {{ 'uuid' }} works!</p>
+    <ckeditor
+      [editor]="classicEditor"
+      [config]="config"
+      [data]="'defaultText()'"
+    ></ckeditor>
+  } @placeholder {
+    <app-loading-spinner></app-loading-spinner>
+  }
+</app-text-wrapper>
