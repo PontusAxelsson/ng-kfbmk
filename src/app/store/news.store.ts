@@ -11,6 +11,7 @@ import { NewsService } from '../services/news.service';
 import { distinctUntilChanged, pipe, switchMap, tap } from 'rxjs';
 
 export interface News {
+  docName: string;
   uuid: string;
   title: string;
   text: string;
@@ -22,7 +23,6 @@ interface NewsState {
   news: News[];
   entities: Map<string, News>;
   isLoading: boolean;
-  isLoaded: boolean;
   limiter: number;
 }
 
@@ -30,7 +30,6 @@ const initialState: NewsState = {
   news: [],
   entities: new Map(),
   isLoading: false,
-  isLoaded: false,
   limiter: 4,
 };
 
@@ -49,7 +48,6 @@ export const NewsStore = signalStore(
         tap((news) =>
           patchState(store, {
             isLoading: false,
-            isLoaded: true,
             entities: new Map(news.map((news) => [news.uuid, news])),
           }),
         ),
@@ -60,14 +58,34 @@ export const NewsStore = signalStore(
         distinctUntilChanged(),
         tap(() => patchState(store, { isLoading: true })),
         switchMap((id) => newsService.getById(id)),
-        tap((news) => {
-          console.log(news);
-
-          return patchState(store, {
+        tap((news) =>
+          patchState(store, {
             isLoading: false,
-            entities: store.entities().set(news.uuid, news),
-          });
-        }),
+            entities: new Map(store.entities().set(news.uuid, news)),
+          }),
+        ),
+      ),
+    ),
+    update: rxMethod<{
+      docName: string;
+      news: { uuid: string; content: string; title: string };
+    }>(
+      pipe(
+        tap(({ news }) =>
+          patchState(store, {
+            entities: new Map(
+              store.entities().set(news.uuid, {
+                ...(store.entities().get(news.uuid) as News),
+              }),
+            ),
+          }),
+        ),
+        tap(({ news, docName }) =>
+          newsService.update(docName, {
+            text: news.content,
+            title: news.title,
+          }),
+        ),
       ),
     ),
   })),

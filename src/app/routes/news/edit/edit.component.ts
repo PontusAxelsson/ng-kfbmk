@@ -11,11 +11,12 @@ import {
   FormControl,
   FormGroup,
   FormsModule,
+  ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { combineLatest, filter, Subject, takeUntil, tap } from 'rxjs';
-import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
+import { Subject } from 'rxjs';
+import { ChangeEvent, CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import {
   ClassicEditor,
   Bold,
@@ -28,10 +29,7 @@ import {
 } from 'ckeditor5';
 import { TextWrapperComponent } from '../../../components/text-wrapper/text-wrapper.component';
 import { LoadingSpinnerComponent } from '../../../components/loading-spinner/loading-spinner.component';
-import { NewsService } from '../../../services/news.service';
 import { NewsStore } from '../../../store/news.store';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { JsonPipe } from '@angular/common';
 
 @Component({
   selector: 'app-edit',
@@ -41,7 +39,7 @@ import { JsonPipe } from '@angular/common';
     CKEditorModule,
     TextWrapperComponent,
     LoadingSpinnerComponent,
-    JsonPipe,
+    ReactiveFormsModule,
   ],
   templateUrl: './edit.component.html',
   styleUrl: './edit.component.scss',
@@ -65,19 +63,36 @@ export class EditComponent implements OnDestroy, OnInit {
   };
 
   newsForm = new FormGroup({
-    title: new FormControl('', { validators: [Validators.required] }),
-    content: new FormControl('', {
+    title: new FormControl('', {
+      validators: [Validators.required, Validators.minLength(5)],
+    }),
+    text: new FormControl('', {
       validators: [Validators.required, Validators.minLength(10)],
     }),
   });
 
   ngOnInit() {
     if (!this.newsItem()) {
-      console.log(this.uuid);
-      console.log(this.newsItem());
-
       this.store.loadById(this.uuid);
     }
+  }
+
+  onContentChange({ editor }: ChangeEvent) {
+    const data = editor.getData();
+    this.newsForm.get('text')?.setValue(data);
+  }
+
+  submitNews(e: SubmitEvent) {
+    e.preventDefault();
+    if (this.newsForm.invalid) return;
+    this.store.update({
+      docName: this.newsItem()!.docName,
+      news: {
+        content: this.newsForm.value.text!,
+        title: this.newsForm.value.title!,
+        uuid: this.uuid,
+      },
+    });
   }
 
   ngOnDestroy() {

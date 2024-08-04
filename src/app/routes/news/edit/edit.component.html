@@ -1,13 +1,26 @@
 <app-text-wrapper>
   @defer (when !loading()) {
-    <p>edit of {{ uuid }} works!</p>
-    <ckeditor
-      [editor]="classicEditor"
-      [config]="config"
-      [data]="'defaultText()'"
-    ></ckeditor>
+    <form (ngSubmit)="submitNews($event)" [formGroup]="newsForm">
+      <div class="form-group">
+        <label htmlFor="title"> title </label>
+        <input
+          type="text"
+          required
+          formControlName="title"
+          [ngModel]="newsItem()?.title"
+          id="title"
+          name="title"
+        />
+      </div>
+      <ckeditor
+        [editor]="classicEditor"
+        [config]="config"
+        (change)="onContentChange($event)"
+        [data]="newsItem()?.text || ''"
+      ></ckeditor>
+      <button class="btn" type="submit">Spara</button>
+    </form>
   } @placeholder {
     <app-loading-spinner></app-loading-spinner>
   }
-  {{newsItem()|json}}
 </app-text-wrapper>

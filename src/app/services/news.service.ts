@@ -9,8 +9,9 @@ import {
   onSnapshot,
   limit,
   orderBy,
-  getDoc,
+  setDoc,
   doc,
+  where,
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 
@@ -21,18 +22,29 @@ export class NewsService {
   readonly firestore = inject(Firestore);
   readonly dbPath: string = 'news';
 
-  subscribeAll(limiter: number = 5) {
-    const docRef: CollectionReference<DocumentData, DocumentData> = collection(
-      this.firestore,
-      this.dbPath,
-    );
+  readonly docRef: CollectionReference<DocumentData, DocumentData> = collection(
+    this.firestore,
+    this.dbPath,
+  );
 
-    const queryRef = query(docRef, limit(limiter), orderBy('created', 'desc'));
+  subscribeAll(limiter: number = 5) {
+    const queryRef = query(
+      this.docRef,
+      limit(limiter),
+      orderBy('created', 'desc'),
+    );
     return new Observable<News[]>((observer) => {
       return onSnapshot(
         queryRef,
         (snapshot) => {
-          return observer.next(snapshot.docs.map((doc) => doc.data() as News));
+          return observer.next(
+            snapshot.docs.map((doc) => {
+              return {
+                ...doc.data(),
+                docName: snapshot.docs[0].id,
+              } as News;
+            }),
+          );
         },
         (error) => observer.error(error.message),
       );
@@ -40,18 +52,23 @@ export class NewsService {
   }
 
   getById(uid: string) {
-    const queryRef = doc(this.firestore, this.dbPath, uid);
+    const queryRef = query(this.docRef, where('uuid', '==', uid), limit(1));
     return new Observable<News>((observer) => {
       return onSnapshot(
         queryRef,
-        () =>
-          getDoc(queryRef).then((doc) => {
-            console.log(doc.exists());
-
-            return observer.next(doc.data() as News);
-          }),
+        (snapshot) => {
+          const doc = snapshot.docs[0].data() as News;
+          const news: News = { ...doc, docName: snapshot.docs[0].id };
+          return observer.next(news);
+        },
         (error) => observer.error(error.message),
       );
     });
+  }
+
+  update(docName: string, data: { text: string; title: string }) {
+    const newsRef = doc(this.firestore, this.dbPath, docName);
+    console.log('updating news', docName, data);
+    setDoc(newsRef, data, { merge: true }).catch(console.log);
   }
 }

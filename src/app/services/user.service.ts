@@ -13,7 +13,7 @@ import {
   onSnapshot,
   setDoc,
 } from '@angular/fire/firestore';
-import { Observable, from, of } from 'rxjs';
+import { Observable, from } from 'rxjs';
 
 export interface UserData {
   name: string;
