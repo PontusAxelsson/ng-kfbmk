@@ -8,7 +8,9 @@ import {
 } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { NewsService } from '../services/news.service';
-import { distinctUntilChanged, pipe, switchMap, tap } from 'rxjs';
+import { distinctUntilChanged, map, pipe, switchMap, tap } from 'rxjs';
+import { UserData } from '../services/user.service';
+import { User } from '@angular/fire/auth';
 
 export interface News {
   docName: string;
@@ -62,6 +64,30 @@ export const NewsStore = signalStore(
           patchState(store, {
             isLoading: false,
             entities: new Map(store.entities().set(news.uuid, news)),
+          }),
+        ),
+      ),
+    ),
+    add: rxMethod<{
+      news: { content: string; title: string };
+      user: User | null | undefined;
+    }>(
+      pipe(
+        map(({ news, user }) =>
+          newsService.add({ title: news.title, text: news.content }, user),
+        ),
+        tap(({ id, text, title }) =>
+          patchState(store, {
+            entities: new Map(
+              store.entities().set(id, {
+                uuid: id,
+                text,
+                title,
+                created: { seconds: Date.now(), nanoseconds: 0 },
+                createdBy: 'me',
+                docName: id,
+              }),
+            ),
           }),
         ),
       ),

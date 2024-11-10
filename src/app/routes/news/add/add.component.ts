@@ -1,10 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
   inject,
-  OnDestroy,
-  OnInit,
   signal,
 } from '@angular/core';
 import {
@@ -14,8 +11,6 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { Subject } from 'rxjs';
 import { ChangeEvent, CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import {
   ClassicEditor,
@@ -29,7 +24,10 @@ import {
 } from 'ckeditor5';
 import { TextWrapperComponent } from '../../../components/text-wrapper/text-wrapper.component';
 import { LoadingSpinnerComponent } from '../../../components/loading-spinner/loading-spinner.component';
-import { NewsStore } from '../../../store/news.store';
+import { News, NewsStore } from '../../../store/news.store';
+import { UserService } from '../../../services/user.service';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-edit',
@@ -41,19 +39,18 @@ import { NewsStore } from '../../../store/news.store';
     LoadingSpinnerComponent,
     ReactiveFormsModule,
   ],
-  templateUrl: './edit.component.html',
-  styleUrl: './edit.component.scss',
+  templateUrl: './add.component.html',
+  styleUrl: '../edit/edit.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EditComponent implements OnDestroy, OnInit {
-  destroyMe$ = new Subject<number>();
-  activatedRoute = inject(ActivatedRoute);
-  store = inject(NewsStore);
+export class AddComponent {
+  newsStore = inject(NewsStore);
+  userService = inject(UserService);
+  router = inject(Router);
+  newsItem = signal<News | undefined>(undefined);
 
-  uuid = this.activatedRoute.snapshot.params['uuid'];
-  count = 0;
-  newsItem = computed(() => this.store.entities().get(this.uuid));
   loading = signal(false);
+  user = toSignal(this.userService.user());
 
   classicEditor = ClassicEditor;
 
@@ -71,12 +68,6 @@ export class EditComponent implements OnDestroy, OnInit {
     }),
   });
 
-  ngOnInit() {
-    if (!this.newsItem()) {
-      this.store.loadById(this.uuid);
-    }
-  }
-
   onContentChange({ editor }: ChangeEvent) {
     const data = editor.getData();
     this.newsForm.get('text')?.setValue(data);
@@ -85,19 +76,13 @@ export class EditComponent implements OnDestroy, OnInit {
   submitNews(e: SubmitEvent) {
     e.preventDefault();
     if (this.newsForm.invalid) return;
-
-    this.store.update({
-      docName: this.newsItem()!.docName,
+    this.newsStore.add({
       news: {
         content: this.newsForm.value.text!,
         title: this.newsForm.value.title!,
-        uuid: this.uuid,
       },
+      user: this.user(),
     });
-  }
-
-  ngOnDestroy() {
-    this.destroyMe$.next(1);
-    this.destroyMe$.complete();
+    this.router.navigate(['news']);
   }
 }

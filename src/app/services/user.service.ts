@@ -34,6 +34,8 @@ export class UserService {
 
     const { user } = await signInWithPopup(this.auth, new GoogleAuthProvider());
     const refUserDoc = doc(this.firestore, 'users', user.uid);
+    console.log('user.uid', user.uid);
+
     const { data, exists } = await getDoc(refUserDoc);
     if (!exists) {
       return await setDoc(refUserDoc, {

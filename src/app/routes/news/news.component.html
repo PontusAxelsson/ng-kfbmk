@@ -1,5 +1,10 @@
 <app-text-wrapper>
   <h2>Nyheter</h2>
+  @if (userStore.user()?.role === 'admin') {
+    <a routerLink="/news/add" routerLinkActive="active">
+      <button class="btn" type="button">Lägg till nyhet</button>
+    </a>
+  }
   @for (news of store.news(); track news.uuid) {
     <div>
       <h4 className="title" [innerText]="news.title"></h4>

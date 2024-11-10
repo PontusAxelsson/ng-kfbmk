@@ -1,0 +1,28 @@
+<app-text-wrapper>
+  @defer (when !loading()) {
+    <form (ngSubmit)="submitNews($event)" [formGroup]="newsForm">
+      <div class="form-group">
+        <label htmlFor="title">Titel</label>
+        <input
+          type="text"
+          required
+          formControlName="title"
+          [ngModel]="newsItem()?.title"
+          id="title"
+          name="title"
+        />
+      </div>
+      <ckeditor
+        [editor]="classicEditor"
+        [config]="config"
+        (change)="onContentChange($event)"
+        [data]="newsItem()?.text || ''"
+      ></ckeditor>
+      <button class="btn" type="submit" [disabled]="newsForm.invalid">
+        Lägg till
+      </button>
+    </form>
+  } @placeholder {
+    <app-loading-spinner></app-loading-spinner>
+  }
+</app-text-wrapper>

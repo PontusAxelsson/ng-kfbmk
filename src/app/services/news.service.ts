@@ -9,11 +9,14 @@ import {
   onSnapshot,
   limit,
   orderBy,
-  setDoc,
+  updateDoc,
   doc,
   where,
+  addDoc,
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
+import { v4 as uuid } from 'uuid';
+import { User } from '@angular/fire/auth';
 
 @Injectable({
   providedIn: 'root',
@@ -66,9 +69,25 @@ export class NewsService {
     });
   }
 
+  add(data: { text: string; title: string }, user: User | null | undefined) {
+    if (!user) {
+      throw new Error('User is not authenticated');
+    }
+    const id = uuid();
+    const newsItem = {
+      ...data,
+      uuid: id,
+      created_by: user?.uid,
+      created: new Date(),
+    };
+
+    addDoc(this.docRef, newsItem);
+
+    return { ...data, id };
+  }
+
   update(docName: string, data: { text: string; title: string }) {
     const newsRef = doc(this.firestore, this.dbPath, docName);
-    console.log('updating news', docName, data);
-    setDoc(newsRef, data, { merge: true }).catch(console.log);
+    updateDoc(newsRef, data);
   }
 }
